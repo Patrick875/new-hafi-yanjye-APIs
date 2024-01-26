@@ -11,6 +11,7 @@ import { CouponsService } from './coupons.service'
 import { CreateCouponDto } from './dto/create-coupon.dto'
 import { UpdateCouponDto } from './dto/update-coupon.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApplyCouponDto } from './dto/apply-coupon.dto'
 @ApiTags('coupons')
 @Controller('coupons')
 export class CouponsController {
@@ -44,5 +45,11 @@ export class CouponsController {
   @ApiOperation({ summary: 'Delete Coupon by id ' })
   remove(@Param('id') id: string) {
     return this.couponsService.remove(+id)
+  }
+
+  @Post('apply')
+  @ApiOperation({ summary: 'Apply Coupon code ' })
+  applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
+    return this.couponsService.applyCoupon(applyCouponDto)
   }
 }
