@@ -30,13 +30,13 @@ export class AuthService {
     }
   }
 
-  async signUp(signusUpto: SignUpDto) {
-    const user = await this.usersService.findByEmail(signusUpto.email)
+  async signUp(signUpto: SignUpDto) {
+    const user = await this.usersService.findByEmail(signUpto.email)
     if (user) {
       throw new ConflictException()
     }
     const userEntity = await this.usersService.create({
-      ...signusUpto,
+      ...signUpto,
       role: Role.CUSTOMER,
     })
     const newUser = await this.userRepsitory.save(userEntity)
