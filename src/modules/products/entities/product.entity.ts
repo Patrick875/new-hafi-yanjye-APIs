@@ -7,7 +7,6 @@ import {
 } from 'typeorm'
 import { ProductImage } from './product-image.entity'
 import { Category } from 'src/modules/categories/entities/category.entity'
-import { Order } from 'src/modules/orders/entities/order.entity'
 import { OrderDetails } from 'src/modules/orders/entities/order-details.entity'
 
 @Entity()
