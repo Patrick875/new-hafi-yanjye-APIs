@@ -35,7 +35,6 @@ export class AuthService {
     if (user) {
       throw new ConflictException()
     }
-    console.log(signUpto)
     const userEntity = await this.usersService.create({
       ...signUpto,
       role: Role.CUSTOMER,
