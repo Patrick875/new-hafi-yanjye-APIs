@@ -6,6 +6,7 @@ import { CouponRepository } from './coupons.repository'
 import { ProductRepository } from '../products/products.repository'
 import { Product } from '../products/entities/product.entity'
 import { Coupon } from './entities/coupon.entity'
+import { OrderRepository } from '../orders/orders.repository'
 
 @Module({
   imports: [
@@ -14,9 +15,15 @@ import { Coupon } from './entities/coupon.entity'
       Product,
       CouponRepository,
       ProductRepository,
+      OrderRepository,
     ]),
   ],
   controllers: [CouponsController],
-  providers: [CouponsService, CouponRepository, ProductRepository],
+  providers: [
+    CouponsService,
+    CouponRepository,
+    ProductRepository,
+    OrderRepository,
+  ],
 })
 export class CouponsModule {}

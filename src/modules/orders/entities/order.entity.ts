@@ -7,6 +7,7 @@ import {
 } from 'typeorm'
 import { OrderDetails } from './order-details.entity'
 import { User } from 'src/modules/users/entities/user.entity'
+import { Coupon } from 'src/modules/coupons/entities/coupon.entity'
 
 @Entity()
 export class Order {
@@ -20,10 +21,16 @@ export class Order {
   orderDate: Date
 
   @Column()
+  total: number
+
+  @Column()
   status: OrderStatus
 
   @OneToMany(() => OrderDetails, (orderDetails) => orderDetails.order)
   orderDetails: OrderDetails[]
+
+  @ManyToOne(() => Coupon, (coupon) => coupon.order)
+  coupon: Coupon
 
   @ManyToOne(() => User, (customer) => customer.orders)
   customer: User
