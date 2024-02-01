@@ -7,25 +7,33 @@ import {
   Param,
   Delete,
   UseGuards,
-  SetMetadata,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { AuthGuard } from '../auth/auth.guard'
 import { Roles } from '../auth/roles/roles.decorator'
 import { Role } from './entities/user.entity'
+import { RolesGuard } from '../auth/roles/roles.guard'
 
 @ApiTags('users in Progress')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard)
-  @Roles(Role.AGENT)
-  @SetMetadata('role', [Role.AGENT])
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Create user / authenticated route ' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiBearerAuth()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto)

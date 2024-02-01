@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 export enum Role {
   ADMIN = 'ADMIN',
   AGENT = 'AGENT',
+  DRIVER = 'DRIVER',
   CUSTOMER = 'CUSTOMER',
 }
 
@@ -24,7 +25,7 @@ export class User {
   @Column({
     default: Role.AGENT,
   })
-  role: string
+  role: Role
 
   @OneToMany(() => Order, (orders) => orders.customer)
   orders: Order[]

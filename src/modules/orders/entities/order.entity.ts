@@ -20,7 +20,7 @@ export class Order {
   @Column()
   orderDate: Date
 
-  @Column()
+  @Column({ default: 0 })
   total: number
 
   @Column()

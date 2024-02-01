@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { AuthController } from './auth.controller'
 import { jwtConstants } from './auth.constants'
 import { UsersService } from '../users/users.service'
+import { BcryptService } from './bcrypt.service'
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { UsersService } from '../users/users.service'
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, BcryptService],
   controllers: [AuthController],
   exports: [AuthService],
 })
