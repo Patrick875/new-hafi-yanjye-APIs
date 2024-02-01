@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderDto } from './dto/update-order.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -8,6 +8,12 @@ import { OrderDetailsRepository } from './order-details.repository'
 import { OrderStatus } from './entities/order.entity'
 import { OrderDetails } from './entities/order-details.entity'
 import { UserRepository } from '../users/user.repository'
+import { REQUEST } from '@nestjs/core'
+
+// Create a custom request interface that extends the Express.Request interface
+interface CustomRequest extends Request {
+  user: { /* Define the structure of the user object here */ };
+}
 
 @Injectable()
 export class OrdersService {
@@ -20,9 +26,11 @@ export class OrdersService {
     private productRepository: ProductRepository,
     @InjectRepository(OrderDetailsRepository)
     private orderDetailsRepository: OrderDetailsRepository,
+    @Inject(REQUEST) private readonly request: CustomRequest,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
+    console.log(this.request.user)
     const orderObj = {
       orderId: await this.generateOrderId(),
       orderDate: new Date(),

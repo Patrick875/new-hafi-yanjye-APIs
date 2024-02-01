@@ -6,21 +6,29 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
 
-@ApiBearerAuth()
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post()
   @ApiOperation({ summary: 'Create Category' })
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiBearerAuth()
+  @Post()
+  create(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() createCategoryDto: CreateCategoryDto,
+  ) {
+    console.log(image.originalname)
     return this.categoriesService.create(createCategoryDto)
   }
 

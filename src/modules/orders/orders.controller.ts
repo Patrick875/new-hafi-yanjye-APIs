@@ -6,17 +6,34 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common'
 import { OrdersService } from './orders.service'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderDto } from './dto/update-order.dto'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { Role } from '../users/entities/user.entity'
+import { AuthGuard } from '../auth/auth.guard'
+import { RolesGuard } from '../auth/roles/roles.guard'
+import { Roles } from '../auth/roles/roles.decorator'
 
 @ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @Roles(Role.CUSTOMER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Create user / authenticated route ' })
+  @ApiResponse({ status: 200, description: 'User created successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create order' })
   create(@Body() createOrderDto: CreateOrderDto) {
