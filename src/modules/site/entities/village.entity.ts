@@ -10,6 +10,6 @@ export class Village {
   @Column()
   name: string
 
-//   @ManyToOne(() => Cell, (cell) => cell.villages)
-//   cell: Cell
+  //   @ManyToOne(() => Cell, (cell) => cell.villages)
+  //   cell: Cell
 }

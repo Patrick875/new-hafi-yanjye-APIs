@@ -34,8 +34,8 @@ export const typeOrmConfigAsync: TypeOrmModuleAsyncOptions = {
     database: configService.get<string>('DB_NAME'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true,
-    // ssl: {
-    //   rejectUnauthorized: true, // This line is optional and might be needed depending on your PostgreSQL server setup
-    // },
+    ssl: {
+      rejectUnauthorized: true, // This line is optional and might be needed depending on your PostgreSQL server setup
+    },
   }),
 }
