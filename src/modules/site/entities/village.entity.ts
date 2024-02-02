@@ -1,6 +1,6 @@
 // village.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
-import { Cell } from './cell.entity'
+// import { Cell } from './cell.entity'
 
 @Entity()
 export class Village {
@@ -10,6 +10,6 @@ export class Village {
   @Column()
   name: string
 
-  @ManyToOne(() => Cell, (cell) => cell.villages)
-  cell: Cell
+//   @ManyToOne(() => Cell, (cell) => cell.villages)
+//   cell: Cell
 }
