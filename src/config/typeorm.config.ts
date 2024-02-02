@@ -8,12 +8,12 @@ import {
 export default class TypeORmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
     return {
-      type: 'sqlite',
-      // host: configService.get<string>('DB_HOST'),
-      // port: configService.get<number>('DB_PORT'),
-      // username: configService.get('DB_USERNAME'),
-      // password: configService.get('DB_PASSWORD'),
-      database: configService.get<string>('SQLITE_DB'),
+      type: 'postgres',
+      host: configService.get<string>('DB_HOST'),
+      port: configService.get<number>('DB_PORT'),
+      username: configService.get('DB_USERNAME'),
+      password: configService.get('DB_PASSWORD'),
+      database: configService.get<string>('DB_NAME'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: true,
     }
@@ -26,13 +26,19 @@ export const typeOrmConfigAsync: TypeOrmModuleAsyncOptions = {
   useFactory: async (
     configService: ConfigService,
   ): Promise<TypeOrmModuleOptions> => ({
-    type: 'sqlite',
-    // host: configService.get<string>('DB_HOST'),
-    // port: configService.get<number>('DB_PORT'),
-    // username: configService.get<string>('DB_USERNAME'),
-    // password: configService.get<string>('DB_PASSWORD'),
-    database: configService.get<string>('SQLITE_DB'),
+    type: 'postgres',
+    host: configService.get<string>('DB_HOST'),
+    port: configService.get<number>('DB_PORT'),
+    username: configService.get<string>('DB_USERNAME'),
+    password: configService.get<string>('DB_PASSWORD'),
+    database: configService.get<string>('DB_NAME'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true,
+    ssl:
+      configService.get<string>('NODE_ENV') === 'development'
+        ? false
+        : {
+            rejectUnauthorized: true, // This line is optional and might be needed depending on your PostgreSQL server setup
+          },
   }),
 }
