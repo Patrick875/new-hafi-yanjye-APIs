@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderDto } from './dto/update-order.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -9,10 +9,11 @@ import { OrderStatus } from './entities/order.entity'
 import { OrderDetails } from './entities/order-details.entity'
 import { UserRepository } from '../users/user.repository'
 import { REQUEST } from '@nestjs/core'
+import { AuthPayload } from '../interfaces/auth.payload'
 
 // Create a custom request interface that extends the Express.Request interface
 interface CustomRequest extends Request {
-  user: { /* Define the structure of the user object here */ };
+  user: AuthPayload
 }
 
 @Injectable()
@@ -30,12 +31,21 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    console.log(this.request.user)
+    // Validate products here
+    const invalidProductIds = await this.validateProducts(createOrderDto.order)
+
+    if (invalidProductIds.length) {
+      throw new NotFoundException(
+        `No Product associated with ${invalidProductIds.join(', ')}`,
+      )
+    }
+
+    const { user } = this.request
     const orderObj = {
       orderId: await this.generateOrderId(),
       orderDate: new Date(),
       status: OrderStatus.PENDING,
-      customer: await this.userRepository.findOne({ where: { id: 3 } }),
+      customer: await this.userRepository.findOne({ where: { id: user.id } }),
     }
 
     const order = this.orderRepository.create(orderObj)
@@ -74,6 +84,7 @@ export class OrdersService {
     return newOrder
   }
 
+  asignOrderAgent() {}
   findAll() {
     return this.orderRepository.find({
       relations: { customer: true, orderDetails: true },
@@ -108,7 +119,26 @@ export class OrdersService {
       .toString()
       .padStart(5, '0')}`
 
-    console.log(formattedOrderId)
     return formattedOrderId
+  }
+
+  async validateProducts(
+    orderItems: { productId: number; quantity: number }[],
+  ): Promise<number[]> {
+    // Get the list of product IDs from the order items
+    const productIds = orderItems.map((item) => item.productId)
+
+    // Find product IDs that have no associated products
+    const invalidProductIds = []
+
+    for (const productId of productIds) {
+      const product = await this.productRepository.findOne({
+        where: { id: productId },
+      })
+      if (!product) {
+        invalidProductIds.push(productId)
+      }
+    }
+    return invalidProductIds
   }
 }

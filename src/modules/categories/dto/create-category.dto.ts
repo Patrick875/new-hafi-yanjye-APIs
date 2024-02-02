@@ -6,6 +6,5 @@ export class CreateCategoryDto {
 
   @MinLength(3)
   description: string
-
   image: string
 }

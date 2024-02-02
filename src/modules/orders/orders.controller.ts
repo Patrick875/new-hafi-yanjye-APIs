@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common'
 import { OrdersService } from './orders.service'
 import { CreateOrderDto } from './dto/create-order.dto'
-import { UpdateOrderDto } from './dto/update-order.dto'
+// import { UpdateOrderDto } from './dto/update-order.dto'
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -27,12 +18,12 @@ import { Roles } from '../auth/roles/roles.decorator'
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Roles(Role.CUSTOMER)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Create user / authenticated route ' })
   @ApiResponse({ status: 200, description: 'User created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
+  @Roles(Role.CUSTOMER)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create order' })
@@ -52,13 +43,13 @@ export class OrdersController {
     return this.ordersService.findOne(+id)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto)
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  //   return this.ordersService.update(+id, updateOrderDto)
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id)
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.ordersService.remove(+id)
+  // }
 }
