@@ -1,5 +1,5 @@
 // village.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 // import { Cell } from './cell.entity'
 
 @Entity()

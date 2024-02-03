@@ -29,7 +29,7 @@ export class CreateSiteDto {
   @IsNumber()
   sector: number
 
-  @IsNotEmpty()
-  @IsNumber()
-  cell: number
+  // @IsNotEmpty()
+  // @IsNumber()
+  // cell: number
 }

@@ -1,29 +1,29 @@
-// // district.entity.ts
-// import {
-//   Entity,
-//   PrimaryGeneratedColumn,
-//   Column,
-//   ManyToOne,
-//   OneToMany,
-// } from 'typeorm'
-// import { Province } from './province.entity'
-// import { Sector } from './sector.entity'
-// import { Site } from './site.entity'
+// district.entity.ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm'
+import { Province } from './province.entity'
+import { Sector } from './sector.entity'
+import { Site } from './site.entity'
 
-// @Entity()
-// export class District {
-//   @PrimaryGeneratedColumn()
-//   id: number
+@Entity()
+export class District {
+  @PrimaryGeneratedColumn()
+  id: number
 
-//   @Column()
-//   name: string
+  @Column()
+  name: string
 
 //   @ManyToOne(() => Province, (province) => province.districts)
 //   province: Province
 
-//   @OneToMany(() => Sector, (sector) => sector.district)
-//   sectors: Sector[]
+  @OneToMany(() => Sector, (sector) => sector.district)
+  sectors: Sector[]
 
-//   @OneToMany(() => Site, (site) => site.province)
-//   site: Site[]
-// }
+  @OneToMany(() => Site, (site) => site.district)
+  site: Site[]
+}

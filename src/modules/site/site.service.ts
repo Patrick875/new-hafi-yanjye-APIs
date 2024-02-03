@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { CreateSiteDto } from './dto/create-site.dto'
 import { UpdateSiteDto } from './dto/update-site.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-// import { ProvinceRepository } from './site.repository.province'
+import { ProvinceRepository } from './site.repository.province'
 import { SiteRepository } from './site.repository'
 
 @Injectable()
@@ -36,6 +36,5 @@ export class SiteService {
 
   getAllProvince() {
     // return this.provinceRepository.find()
-    return 1
   }
 }
