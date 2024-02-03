@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common'
 import { OrdersService } from './orders.service'
 import { CreateOrderDto } from './dto/create-order.dto'
 // import { UpdateOrderDto } from './dto/update-order.dto'
@@ -18,7 +18,7 @@ import { Roles } from '../auth/roles/roles.decorator'
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @ApiOperation({ summary: 'Create user / authenticated route ' })
+  @ApiOperation({ summary: 'Create order / authenticated route ' })
   @ApiResponse({ status: 200, description: 'User created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -26,14 +26,20 @@ export class OrdersController {
   @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Post()
-  @ApiOperation({ summary: 'Create order' })
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto)
   }
 
+  @ApiOperation({ summary: 'all orders / authenticated route ' })
+  @ApiResponse({ status: 200, description: 'All orders' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @Roles(Role.CUSTOMER, Role.AGENT, Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Retrieve all orders' })
-  findAll() {
+  findAll(@Request() request) {
     return this.ordersService.findAll()
   }
 

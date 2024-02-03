@@ -1,7 +1,7 @@
 // province.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import { District } from './district.entity'
-import { Site } from './site.entity'
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+// import { District } from './district.entity'
+// import { Site } from './site.entity'
 
 @Entity()
 export class Province {
@@ -11,9 +11,9 @@ export class Province {
   @Column()
   name: string
 
-//   @OneToMany(() => District, (district) => district.province)
-//   districts: District[]
+  // @OneToMany(() => District, (district) => district.province)
+  // district: District[]
 
-//   @OneToMany(() => Site, (site) => site.province)
-//   site: Site[]
+  //   @OneToMany(() => Site, (site) => site.province)
+  //   site: Site[]
 }
