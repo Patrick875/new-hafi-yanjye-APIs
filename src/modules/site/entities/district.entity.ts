@@ -18,8 +18,8 @@ export class District {
   @Column()
   name: string
 
-  // @ManyToOne(() => Province, (province) => province.district)
-  // province: Province
+  @ManyToOne(() => Province, (province) => province.district)
+  province: Province
 
   @OneToMany(() => Sector, (sector) => sector.district)
   sectors: Sector[]
