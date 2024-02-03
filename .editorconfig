@@ -1,3 +1,3 @@
 # .editorconfig
 [*]
-end_of_line = crlf  # or crlf
+end_of_line = auto  # or crlf
