@@ -1,6 +1,6 @@
 // src/scripts/seed-script.ts
 import { NestFactory } from '@nestjs/core'
-import { Connection } from 'typeorm'
+// import { Connection } from 'typeorm'
 import { AppModule } from '../app.module' // adjust the path as needed
 
 // import provincesData from './data/address'

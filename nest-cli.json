@@ -10,7 +10,8 @@
         "classValidatorShim": true,
         "introspectComments": true,
         "dtoFileNameSuffix": [
-          ".dto.ts"
+          ".dto.ts",
+          ".entity.ts"
         ]
       }
       }]

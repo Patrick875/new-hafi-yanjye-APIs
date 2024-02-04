@@ -8,12 +8,22 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { Roles } from '../auth/roles/roles.decorator'
+import { Role } from '../users/entities/user.entity'
+import { AuthGuard } from '../auth/auth.guard'
+import { RolesGuard } from '../auth/roles/roles.guard'
 
 @ApiTags('categories')
 @Controller('categories')
@@ -22,13 +32,18 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'Create Category' })
   @UseInterceptors(FileInterceptor('image'))
+  @ApiResponse({ status: 200, description: 'User created successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Post()
   create(
     @UploadedFile() image: Express.Multer.File,
     @Body() createCategoryDto: CreateCategoryDto,
   ) {
-    console.log(image.originalname)
+    // console.log(image.originalname)
     return this.categoriesService.create(createCategoryDto)
   }
 

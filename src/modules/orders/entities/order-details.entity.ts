@@ -1,7 +1,14 @@
-import { Product } from 'src/modules/products/entities/product.entity'
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Product } from '../../products/entities/product.entity'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import { Order } from './order.entity'
 import { IsNotEmpty, IsNumber } from 'class-validator'
+import { OrderProcess } from './order-process.entity'
 
 @Entity()
 export class OrderDetails {
@@ -16,6 +23,8 @@ export class OrderDetails {
   @ManyToOne(() => Order, (order) => order.orderDetails)
   order: Order
 
+  @OneToOne(() => OrderProcess)
+  orderProcessor: OrderProcess
   @ManyToOne(() => Product, (product) => product.orders)
   product: Product
 }

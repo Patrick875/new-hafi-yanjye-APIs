@@ -12,6 +12,7 @@ import { ConfigModule } from '@nestjs/config'
 import { validate } from './config/env.validation'
 import { AuthModule } from './modules/auth/auth.module'
 import { SiteModule } from './modules/site/site.module'
+import { SupplierModule } from './modules/supplier/supplier.module'
 @Module({
   imports: [
     UsersModule,
@@ -25,6 +26,7 @@ import { SiteModule } from './modules/site/site.module'
     ConfigModule.forRoot({ isGlobal: true, validate }),
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     SiteModule,
+    SupplierModule,
   ],
   controllers: [],
   providers: [],

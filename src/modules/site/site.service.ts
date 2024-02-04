@@ -9,8 +9,8 @@ import { SiteRepository } from './site.repository'
 export class SiteService {
   constructor(
     @InjectRepository(SiteRepository) private siteRepository: SiteRepository,
-    // @InjectRepository(ProvinceRepository)
-    // private provinceRepository: ProvinceRepository,
+    @InjectRepository(ProvinceRepository)
+    private provinceRepository: ProvinceRepository,
   ) {}
 
   create(createSiteDto: CreateSiteDto) {
@@ -35,6 +35,6 @@ export class SiteService {
   }
 
   getAllProvince() {
-    // return this.provinceRepository.find()
+    return this.provinceRepository.find()
   }
 }
