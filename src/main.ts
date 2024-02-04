@@ -3,7 +3,7 @@ import { AppModule } from './app.module'
 import { SwaggerModule } from '@nestjs/swagger'
 import { config, customOptions } from './config/swagger.config'
 import { ValidationPipe } from '@nestjs/common'
-import { defaultSeed } from './seeder/default-seed'
+// import { defaultSeed } from './seeder/default-seed'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true })
@@ -13,6 +13,6 @@ async function bootstrap() {
   })
   SwaggerModule.setup('docs', app, document, customOptions)
   await app.listen(3000)
-  defaultSeed()
+  // defaultSeed()
 }
 bootstrap()
