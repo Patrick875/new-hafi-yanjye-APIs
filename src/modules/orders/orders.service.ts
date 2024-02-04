@@ -9,12 +9,7 @@ import { OrderStatus } from './entities/order.entity'
 import { OrderDetails } from './entities/order-details.entity'
 import { UserRepository } from '../users/user.repository'
 import { REQUEST } from '@nestjs/core'
-import { AuthPayload } from '../interfaces/auth.payload'
-
-// Create a custom request interface that extends the Express.Request interface
-interface CustomRequest extends Request {
-  user: AuthPayload
-}
+import { CustomRequest } from '../auth/auth.constants'
 
 @Injectable()
 export class OrdersService {

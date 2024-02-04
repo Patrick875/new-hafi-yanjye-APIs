@@ -22,7 +22,7 @@ import { Roles } from '../auth/roles/roles.decorator'
 import { Role } from './entities/user.entity'
 import { RolesGuard } from '../auth/roles/roles.guard'
 
-@ApiTags('users in Progress')
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

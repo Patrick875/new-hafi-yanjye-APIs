@@ -8,12 +8,14 @@ import { ProvinceRepository } from './site.repository.province'
 import { District } from './entities/district.entity'
 // import { Cell } from './entities/cell.entity'
 import { Village } from './entities/village.entity'
+import { Province } from './entities/province.entity'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Site,
       District,
+      Province,
       // Cell,
       Village,
       SiteRepository,
@@ -21,6 +23,6 @@ import { Village } from './entities/village.entity'
     ]),
   ],
   controllers: [SiteController],
-  providers: [SiteService, SiteRepository],
+  providers: [SiteService, SiteRepository, ProvinceRepository],
 })
 export class SiteModule {}

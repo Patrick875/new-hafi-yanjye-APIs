@@ -1,5 +1,13 @@
+import { OrderProcess } from 'src/modules/orders/entities/order-process.entity'
 import { Order } from 'src/modules/orders/entities/order.entity'
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Supplier } from 'src/modules/supplier/entities/supplier.entity'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -29,6 +37,12 @@ export class User {
 
   @OneToMany(() => Order, (orders) => orders.customer)
   orders: Order[]
+
+  @ManyToOne(() => OrderProcess, (orderProcessor) => orderProcessor.agent)
+  orderProcessor: OrderProcess
+
+  @OneToMany(() => Supplier, (supplier) => supplier.createdBy)
+  supplier: Supplier
 
   @Column({ unique: true })
   email: string
