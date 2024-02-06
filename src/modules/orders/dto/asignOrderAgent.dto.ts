@@ -1,18 +1,11 @@
-import { IsArray, IsNotEmpty, IsNumber } from 'class-validator'
-import { User } from '../../users/entities/user.entity'
+import { IsNotEmpty, IsNumber } from 'class-validator'
 
-export class AsignOrderAgent {
+export class AsignOrderAgentDto {
   @IsNotEmpty()
   @IsNumber()
-  agent: User
+  agentId: number
 
   @IsNotEmpty()
-  @IsArray()
-  items: OrderItems[]
-}
-
-class OrderItems {
   @IsNumber()
-  @IsNotEmpty()
-  productId: number
+  orderItem: number
 }

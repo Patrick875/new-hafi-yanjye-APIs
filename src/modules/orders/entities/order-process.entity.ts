@@ -5,20 +5,25 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { IsNotEmpty, IsString } from 'class-validator'
 import { OrderDetails } from './order-details.entity'
 import { User } from 'src/modules/users/entities/user.entity'
 import { Supplier } from 'src/modules/supplier/entities/supplier.entity'
 
+export enum ProcessStatuses {
+  ASSIGNED = 'ASSIGNED',
+  INPROGRESS = 'INPROGRESS',
+  DONE = 'DONE',
+}
 @Entity()
 export class OrderProcess {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column()
-  @IsNotEmpty()
-  @IsString()
-  orderId: string
+  orderItemId: number
+
+  @Column({ default: ProcessStatuses.ASSIGNED })
+  processStatus: ProcessStatuses
 
   @OneToMany(() => User, (user) => user.orderProcessor)
   agent: User

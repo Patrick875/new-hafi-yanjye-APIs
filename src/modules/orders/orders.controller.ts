@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-  Request,
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common'
 import { OrdersService } from './orders.service'
 import { CreateOrderDto } from './dto/create-order.dto'
 // import { UpdateOrderDto } from './dto/update-order.dto'
@@ -20,6 +12,7 @@ import { Role } from '../users/entities/user.entity'
 import { AuthGuard } from '../auth/auth.guard'
 import { RolesGuard } from '../auth/roles/roles.guard'
 import { Roles } from '../auth/roles/roles.decorator'
+import { AsignOrderAgentDto } from './dto/asignOrderAgent.dto'
 
 @ApiTags('orders')
 @Controller('orders')
@@ -47,7 +40,7 @@ export class OrdersController {
   @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Retrieve all orders' })
-  findAll(@Request() request) {
+  findAll() {
     return this.ordersService.findAll()
   }
 
@@ -55,6 +48,18 @@ export class OrdersController {
   @ApiOperation({ summary: 'Rertrieve single order' })
   findOne(@Param('id') id: string) {
     return this.ordersService.findOne(+id)
+  }
+
+  @ApiOperation({ summary: 'assign order items to agent' })
+  @ApiResponse({ status: 201, description: 'assign order' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Post('assign/agent')
+  asignOrderToAgent(@Body() asignOrderAgentDto: AsignOrderAgentDto) {
+    return this.ordersService.asignOrderAgent(asignOrderAgentDto)
   }
 
   // @Patch(':id')

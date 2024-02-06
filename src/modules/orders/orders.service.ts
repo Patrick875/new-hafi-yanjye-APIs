@@ -10,6 +10,10 @@ import { OrderDetails } from './entities/order-details.entity'
 import { UserRepository } from '../users/user.repository'
 import { REQUEST } from '@nestjs/core'
 import { CustomRequest } from '../auth/auth.constants'
+import { Role } from '../users/entities/user.entity'
+import { Repository } from 'typeorm'
+import { OrderProcess } from './entities/order-process.entity'
+import { AsignOrderAgentDto } from './dto/asignOrderAgent.dto'
 
 @Injectable()
 export class OrdersService {
@@ -22,6 +26,8 @@ export class OrdersService {
     private productRepository: ProductRepository,
     @InjectRepository(OrderDetailsRepository)
     private orderDetailsRepository: OrderDetailsRepository,
+    @InjectRepository(OrderProcess)
+    private orderProcessRepository: Repository<OrderProcess>,
     @Inject(REQUEST) private readonly request: CustomRequest,
   ) {}
 
@@ -59,6 +65,7 @@ export class OrdersService {
 
       orderDetails.product = product
       orderDetails.quantity = orderItem.quantity
+      orderDetails.pricePerItem = product.price
       orderDetails.order = newOrder
 
       const orderDetailsEntity = this.orderDetailsRepository.create({
@@ -72,6 +79,8 @@ export class OrdersService {
       newOrder.orderDetails = newOrder.orderDetails
         ? [...newOrder.orderDetails, newOrderDetails]
         : [newOrderDetails]
+
+      newOrder.total = newOrder.total + product.price * orderItem.quantity
     }
 
     await this.orderRepository.save(newOrder)
@@ -79,11 +88,58 @@ export class OrdersService {
     return newOrder
   }
 
-  asignOrderAgent() {}
-  findAll() {
-    return this.orderRepository.find({
-      relations: { customer: true, orderDetails: true },
+  async asignOrderAgent(asignOrderAgentDto: AsignOrderAgentDto) {
+    const { agentId, orderItem } = asignOrderAgentDto
+    const agent = await this.userRepository.findOne({
+      where: { id: agentId, role: Role.AGENT },
     })
+
+    const orderDetatil = await this.orderDetailsRepository.findOne({
+      where: { id: orderItem },
+    })
+    if (!agent) {
+      throw new NotFoundException(`Could not find agent with Id: ${agentId} `)
+    }
+    if (!orderDetatil) {
+      throw new NotFoundException(`Could not find order with Id: ${orderItem}`)
+    }
+    const orderAget = this.orderProcessRepository.create({
+      orderItemId: orderItem,
+      agent,
+    })
+
+    return this.orderProcessRepository.save(orderAget)
+  }
+  findAll() {
+    const { id: userId, role } = this.request.user
+
+    if (role === Role.ADMIN) {
+      return this.orderRepository.find({
+        relations: { customer: true, orderDetails: true },
+      })
+    }
+    if (role === Role.CUSTOMER) {
+      return this.orderRepository.find({
+        where: {
+          customer: {
+            id: userId,
+          },
+        },
+        relations: {
+          orderDetails: true,
+        },
+      })
+    }
+
+    if (role === Role.AGENT) {
+      return this.orderRepository
+        .createQueryBuilder('order')
+        .innerJoin('order.orderDetails', 'orderDetails')
+        .innerJoin('ororderDetails.orderProcess', 'OrderProcess')
+        .where('orderProcess.agent = :id', { agent: userId })
+    }
+
+    return []
   }
 
   findOne(id: number) {

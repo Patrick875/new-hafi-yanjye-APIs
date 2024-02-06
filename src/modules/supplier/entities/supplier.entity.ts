@@ -1,25 +1,28 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { User } from '../../users/entities/user.entity'
-import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
-import { OrderProcess } from 'src/modules/orders/entities/order-process.entity'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
+import { OrderProcess } from '../../orders/entities/order-process.entity'
 
 @Entity()
 export class Supplier {
   @PrimaryGeneratedColumn()
   id: number
 
-  @IsNotEmpty()
-  @IsString()
+  @Column()
   name: string
 
-  @IsString()
+  @Column()
   tinNumber: string
 
-  @IsString()
-  @IsEmail()
+  @Column({ nullable: true })
   email: string
 
-  @ManyToOne(() => User, (user) => user.supplier)
+  @ManyToOne(() => User, (user) => user.supplier, { nullable: false })
   createdBy: User
 
   @OneToMany(() => OrderProcess, (supplierOrder) => supplierOrder.supplier)

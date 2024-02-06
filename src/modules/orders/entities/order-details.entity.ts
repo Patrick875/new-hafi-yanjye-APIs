@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Order } from './order.entity'
-import { IsNotEmpty, IsNumber } from 'class-validator'
 import { OrderProcess } from './order-process.entity'
 
 @Entity()
@@ -15,10 +14,11 @@ export class OrderDetails {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ nullable: true })
-  @IsNotEmpty()
-  @IsNumber()
+  @Column()
   quantity: number
+
+  @Column()
+  pricePerItem: number
 
   @ManyToOne(() => Order, (order) => order.orderDetails)
   order: Order
