@@ -106,6 +106,7 @@ export class OrdersService {
     const orderAget = this.orderProcessRepository.create({
       orderItemId: orderItem,
       agent,
+      orderItem: orderDetatil,
     })
 
     return this.orderProcessRepository.save(orderAget)
