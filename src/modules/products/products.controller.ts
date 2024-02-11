@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { ProductsService } from './products.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { FilterProductDto } from './dto/get-all-products.dto'
 
 @ApiTags('products')
 @Controller('products')
@@ -25,8 +27,8 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  findAll() {
-    return this.productsService.findAll()
+  findAll(@Query() filterProductDto: FilterProductDto) {
+    return this.productsService.findAll(filterProductDto)
   }
 
   @Get(':id')

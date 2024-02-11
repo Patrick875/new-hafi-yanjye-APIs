@@ -5,13 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { OrderRepository } from './orders.repository'
 import { ProductRepository } from '../products/products.repository'
 import { OrderDetailsRepository } from './order-details.repository'
-import { OrderStatus } from './entities/order.entity'
+import { Order, OrderStatus } from './entities/order.entity'
 import { OrderDetails } from './entities/order-details.entity'
 import { UserRepository } from '../users/user.repository'
 import { REQUEST } from '@nestjs/core'
 import { CustomRequest } from '../auth/auth.constants'
 import { Role } from '../users/entities/user.entity'
-import { Repository } from 'typeorm'
+import { Repository, SelectQueryBuilder } from 'typeorm'
 import { OrderProcess } from './entities/order-process.entity'
 import { AsignOrderAgentDto } from './dto/asignOrderAgent.dto'
 
@@ -89,29 +89,47 @@ export class OrdersService {
   }
 
   async asignOrderAgent(asignOrderAgentDto: AsignOrderAgentDto) {
-    const { agentId, orderItem } = asignOrderAgentDto
+    const { agentId, orderItems } = asignOrderAgentDto
     const agent = await this.userRepository.findOne({
       where: { id: agentId, role: Role.AGENT },
     })
 
-    const orderDetatil = await this.orderDetailsRepository.findOne({
-      where: { id: orderItem },
-    })
+    const unexstitngOrderItems: number[] = []
+    const validOrderItems: OrderDetails[] = []
+    const orderAgets = []
+
+    for (const orderItem of orderItems) {
+      const orderDetatil = await this.orderDetailsRepository.findOne({
+        where: { id: orderItem },
+      })
+      if (!orderDetatil) {
+        unexstitngOrderItems.push(orderItem)
+      }
+      validOrderItems.push(orderDetatil)
+    }
+
+    if (unexstitngOrderItems.length) {
+      throw new NotFoundException(
+        `OrderDetails with ${unexstitngOrderItems.join(', ')} not found `,
+      )
+    }
+
     if (!agent) {
       throw new NotFoundException(`Could not find agent with Id: ${agentId} `)
     }
-    if (!orderDetatil) {
-      throw new NotFoundException(`Could not find order with Id: ${orderItem}`)
-    }
-    const orderAget = this.orderProcessRepository.create({
-      orderItemId: orderItem,
-      agent,
-      orderItem: orderDetatil,
-    })
 
-    return this.orderProcessRepository.save(orderAget)
+    for (const validOrderItem of validOrderItems) {
+      const orderAget = this.orderProcessRepository.create({
+        orderItemId: validOrderItem.id,
+        agent,
+        orderItem: validOrderItem,
+      })
+      orderAgets.push(orderAget)
+    }
+
+    return this.orderProcessRepository.save(orderAgets)
   }
-  findAll() {
+  findAll(): any[] | Promise<Order[]> | SelectQueryBuilder<Order> {
     const { id: userId, role } = this.request.user
 
     if (role === Role.ADMIN) {

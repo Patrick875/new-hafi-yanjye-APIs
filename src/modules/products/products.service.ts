@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { ProductRepository } from './products.repository'
 import { CategoryRepository } from '../categories/categories.repository'
 import { ProductImageRepository } from './product-image.repository'
+import { FilterProductDto } from './dto/get-all-products.dto'
 
 @Injectable()
 export class ProductsService {
@@ -49,10 +50,26 @@ export class ProductsService {
     return product
   }
 
-  findAll() {
-    return this.productRepository.find({
-      relations: { category: true, images: true },
-    })
+  async findAll(filterProductDto: FilterProductDto) {
+    // return this.productRepository.find({
+    //   relations: { category: true, images: true },
+    // })
+    const { name, price, take, skip } = filterProductDto
+
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.category', 'category')
+      // .leftJoinAndSelect('product.orders', 'orders')
+      .where(name ? 'product.name LIKE :name' : '1=1', { name: `%${name}%` })
+      .andWhere(price !== undefined ? 'product.price = :price' : '1=1', {
+        price,
+      })
+      .take(Number(take) || undefined)
+      .skip(Number(skip) || 0)
+      .orderBy('product.id', 'ASC')
+
+    return await queryBuilder.getMany()
   }
 
   findOne(id: number) {

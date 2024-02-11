@@ -16,7 +16,7 @@ export class SignUpDto {
   email: string
 
   @IsString()
-  @MinLength(4)
+  @MinLength(6)
   password: string
 }
 

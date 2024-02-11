@@ -18,6 +18,14 @@ class EnvironmentVariables {
   @IsNotEmpty()
   @IsString()
   DB_NAME: string
+
+  @IsNotEmpty()
+  @IsString()
+  MAIL_NAME: string
+
+  @IsNotEmpty()
+  @IsString()
+  MAIL_PASS: string
 }
 
 export function validate(config: Record<string, unknown>) {
