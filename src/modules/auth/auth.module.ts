@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller'
 import { jwtConstants } from './auth.constants'
 import { UsersService } from '../users/users.service'
 import { BcryptService } from './bcrypt.service'
+import { MailService } from 'src/utils/emails'
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { BcryptService } from './bcrypt.service'
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService, UsersService, BcryptService],
+  providers: [AuthService, UsersService, BcryptService, MailService],
   controllers: [AuthController],
   exports: [AuthService],
 })

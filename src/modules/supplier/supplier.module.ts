@@ -7,6 +7,7 @@ import { SupplierRepository } from './supplier.repository'
 import { UserRepository } from '../users/user.repository'
 import { User } from '../users/entities/user.entity'
 import { UsersService } from '../users/users.service'
+import { MailService } from 'src/utils/emails'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersService } from '../users/users.service'
   controllers: [SupplierController],
   providers: [
     SupplierService,
+    MailService,
     UsersService,
     SupplierRepository,
     UserRepository,

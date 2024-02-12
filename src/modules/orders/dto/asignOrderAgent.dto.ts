@@ -7,5 +7,5 @@ export class AsignOrderAgentDto {
 
   @IsNotEmpty()
   @IsNumber()
-  orderItem: number
+  orderItems: number[]
 }
