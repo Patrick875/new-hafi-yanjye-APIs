@@ -6,14 +6,24 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { SignInDto } from './dto/sign-in.dto'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { SignUpDtoWithPass } from './dto/sign-up.dto'
 import { PasswordResetDto } from './dto/password-reset.dto'
 import { UpdatepasswordDto } from './dto/updatate-password.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
+import { Roles } from './roles/roles.decorator'
+import { Role } from '../users/entities/user.entity'
+import { AuthGuard } from './auth.guard'
+import { RolesGuard } from './roles/roles.guard'
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -51,6 +61,13 @@ export class AuthController {
     return this.authService.updatePassword(token, updatepasswordDto)
   }
 
+  @Roles(Role.ADMIN, Role.AGENT, Role.CUSTOMER, Role.DRIVER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Create user / authenticated route ' })
+  @ApiResponse({ status: 200, description: 'Reset successful' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiBearerAuth()
   @Post('change-passwrd')
   changePassword(
     @Param('token') token: string,
