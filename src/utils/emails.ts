@@ -23,11 +23,11 @@ export class MailService {
       },
     })
 
-    const mailOptions = {
+    const mailOptions: nodemailer.SendMailOptions = {
       from: this.configService.get<string>('MAIL_NAME'),
       to: data.to,
       subject: data.subject,
-      text: data.text,
+      html: data.text,
     }
 
     transporter.sendMail(mailOptions, (error: any, info: { response: any }) => {

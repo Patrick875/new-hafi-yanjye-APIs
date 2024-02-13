@@ -28,11 +28,30 @@ export class UsersService {
     const emailOption: EmailOption = {
       to: userEntity.email,
       subject: 'HafiYanjye - New Account Creation',
-      text: `Hello ${userEntity.fullName}, <br> Your new account has been created as ${userEntity.role}, <br> use the generated creadentials to access the application or change your password
-      <br>
-      <br>
-      <b>Email: </b> ${userEntity.email} <br>
-      <b>Password: </b> ${password} <br>
+      text: `
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>New User Account Confirmation</title>
+          </head>
+          <body>
+            <h2>Hello ${userEntity.fullName},</h2>
+            <p>Your new account has been created as ${userEntity.role}. <br> Use the generated credentials to access the application or change your password:</p>
+            <br>
+            <p><strong>Email:</strong> ${userEntity.email}</p>
+            <p><strong>Password:</strong> ${password}</p>
+            <br>
+    
+            <p>Enjoy our online service!</p>
+    
+            <br><br>
+            <footer>
+              <p>Best regards,<br>, HafiYanjye </p>
+            </footer>
+          </body>
+        </html>
       `,
     }
 

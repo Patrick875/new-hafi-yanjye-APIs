@@ -22,7 +22,8 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'semi': 'off',
-    '@typescript-eslint/semi': 'off'
+    '@typescript-eslint/semi': 'off',
+    "no-console": ["error", { "allow": ["warn", "error"] }]
 
   },
 };

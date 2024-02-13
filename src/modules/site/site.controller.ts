@@ -7,8 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common'
-import { SiteService } from './site.service'
+import { ProvinceService, SectorService, SiteService } from './site.service'
 import { CreateSiteDto } from './dto/create-site.dto'
 import { UpdateSiteDto } from './dto/update-site.dto'
 import {
@@ -44,6 +45,20 @@ export class SiteController {
     return this.siteService.findAll()
   }
 
+  @Get('province/:id')
+  findAllByProvince(@Param('id') id: number) {
+    return this.siteService.findByProvince(id)
+  }
+  @Get('district/:id')
+  findAllByDistrict(@Param('id') id: number) {
+    return this.siteService.findByDistrict(id)
+  }
+
+  @Get('sector/:id')
+  findAllBySector(@Param('id') id: number) {
+    return this.siteService.findBySector(id)
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.siteService.findOne(+id)
@@ -58,11 +73,30 @@ export class SiteController {
   remove(@Param('id') id: string) {
     return this.siteService.remove(+id)
   }
+}
+
+@ApiTags('province')
+@Controller('site/address')
+export class ProvinceController {
+  constructor(private readonly provinceService: ProvinceService) {}
 
   @ApiOperation({ summary: 'Get all provinces' })
-  @ApiResponse({ status: 200, description: 'sites retrieved successfully' })
-  @Get('address/province')
+  @ApiResponse({ status: 200, description: 'provinces retrieved' })
+  @Get('province')
+  findAll() {
+    return this.provinceService.findAll()
+  }
+}
+
+@ApiTags('sector')
+@Controller('site/address')
+export class SectorController {
+  constructor(private readonly sectorService: SectorService) {}
+
+  @ApiOperation({ summary: 'Get all sectors' })
+  @ApiResponse({ status: 200, description: 'sectors ' })
+  @Get('sector')
   getAddressProvince() {
-    return this.siteService.getAllProvince()
+    return this.sectorService.findAll()
   }
 }
