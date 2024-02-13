@@ -26,6 +26,10 @@ class EnvironmentVariables {
   @IsNotEmpty()
   @IsString()
   MAIL_PASS: string
+
+  @IsNotEmpty()
+  @IsString()
+  FRONTEND: string
 }
 
 export function validate(config: Record<string, unknown>) {

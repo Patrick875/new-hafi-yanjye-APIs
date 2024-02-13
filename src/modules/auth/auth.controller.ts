@@ -63,16 +63,12 @@ export class AuthController {
 
   @Roles(Role.ADMIN, Role.AGENT, Role.CUSTOMER, Role.DRIVER)
   @UseGuards(AuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Create user / authenticated route ' })
-  @ApiResponse({ status: 200, description: 'Reset successful' })
+  @ApiOperation({ summary: 'user change password ' })
+  @ApiResponse({ status: 200, description: 'password changed successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiBearerAuth()
   @Post('change-passwrd')
-  changePassword(
-    @Param('token') token: string,
-    @Body() changePasswordDto: ChangePasswordDto,
-  ) {
-    return this.authService.changePassword(token, changePasswordDto)
+  changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    return this.authService.changePassword(changePasswordDto)
   }
 }

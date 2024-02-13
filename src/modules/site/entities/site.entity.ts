@@ -15,13 +15,13 @@ export class Site {
   @Column()
   description: string
 
-  // @ManyToOne(() => Province, (province) => province.site)
-  // province: Province
+  @ManyToOne(() => Province, (province) => province.site)
+  province: Province
 
   @ManyToOne(() => District, (district) => district.site)
   district: District
 
-  @ManyToOne(() => Sector, (sector) => sector.site)
+  @ManyToOne(() => Sector, (sector) => sector.site, { nullable: false })
   sector: Sector
 
   // @ManyToOne(() => Cell, (cell) => cell.site)

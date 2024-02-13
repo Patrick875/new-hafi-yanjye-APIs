@@ -129,7 +129,11 @@ export class OrdersService {
 
     return this.orderProcessRepository.save(orderAgets)
   }
-  findAll(): any[] | Promise<Order[]> | SelectQueryBuilder<Order> {
+  findAll():
+    | any[]
+    | Promise<Order[]>
+    | SelectQueryBuilder<Order>
+    | Promise<OrderDetails[]> {
     const { id: userId, role } = this.request.user
 
     if (role === Role.ADMIN) {
@@ -151,11 +155,20 @@ export class OrdersService {
     }
 
     if (role === Role.AGENT) {
-      return this.orderRepository
-        .createQueryBuilder('order')
-        .innerJoin('order.orderDetails', 'orderDetails')
-        .innerJoin('ororderDetails.orderProcess', 'OrderProcess')
-        .where('orderProcess.agent = :id', { agent: userId })
+      // return this.orderDetailsRepository.find({
+      //   relations: { orderProcessor: true },
+      // })
+      return (
+        this.orderRepository
+          .createQueryBuilder('order')
+          .innerJoinAndSelect('order.orderDetails', 'orderDetails')
+          // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessor')
+          // .leftJoinAndSelect('orderProcessor.agent', 'agent')
+          // .where('agent.id = :id', { id: userId })
+          // .innerJoinAndSelect('orderProcessor.agent', 'users')
+          // .where('agent.id = :id', { id: userId })
+          .getMany()
+      )
     }
 
     return []

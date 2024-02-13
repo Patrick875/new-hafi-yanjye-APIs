@@ -17,6 +17,8 @@ import { MailService } from 'src/utils/emails'
 import { UpdatepasswordDto } from './dto/updatate-password.dto'
 import { ConfigService } from '@nestjs/config'
 import { ChangePasswordDto } from './dto/change-password.dto'
+import { REQUEST } from '@nestjs/core'
+import { CustomRequest } from './auth.constants'
 
 @Injectable()
 export class AuthService {
@@ -27,6 +29,7 @@ export class AuthService {
     private readonly bcryptService: BcryptService,
     private mailService: MailService,
     @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(REQUEST) private readonly request: CustomRequest,
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -71,12 +74,70 @@ export class AuthService {
 
     const emailOption = {
       to: user.email,
-      subject: `Reset password`,
-      text: `Click the following <a href=' ${this.configService
-        .get<string>}/password/reset/${token}' > Link  <a> to reset your password: `,
+      subject: 'Reset Password',
+      text: `
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Password Reset</title>
+            <style>
+              body {
+                font-family: 'Arial', sans-serif;
+                background-color: #FAFAFA;
+                color: #333;
+                margin: 0;
+                padding: 10;
+              }
+    
+              header {
+                background-color: #4288C1;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+              }
+    
+              main {
+                padding: 20px;
+              }
+    
+              footer {
+                background-color: #4288C1;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+              }
+            </style>
+          </head>
+          <body>
+            <header>
+              <h1> Hafi Yanjye</h1>
+            </header>
+    
+            <main>
+              <p>Hello ${user.fullName},</p>
+              <p>Click the following <a href=" ${this.configService.get<string>(
+                'FRONTEND',
+              )}/password/reset/${token}">Link to reset your password.</a> </p>
+    
+              <br>
+    
+              <p>If you didn't request a password reset, you can ignore this email.</p>
+            </main>
+    
+            <footer>
+              <p>Best regards,</p>
+            </footer>
+          </body>
+        </html>
+      `,
     }
+    await this.mailService.sendResetEmail(emailOption)
 
-    return this.mailService.sendResetEmail(emailOption)
+    return {
+      message: `A link to reset your password has been sent successfully to ${user.email}`,
+    }
   }
 
   async updatePassword(token: string, updatePasswordDto: UpdatepasswordDto) {
@@ -97,19 +158,14 @@ export class AuthService {
       ...user,
       password: await this.bcryptService.hash(updatePasswordDto.newPassword),
     })
-    return this.userRepsitory.save(userEntity)
+    await this.userRepsitory.save(userEntity)
+    return { message: `New Password changed successfully ` }
   }
 
-  async changePassword(token: string, changePasswordDto: ChangePasswordDto) {
-    const userPayload = await this.jwtService
-      .verifyAsync(token)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((err) => {
-        throw new BadRequestException('Invalid token ')
-      })
-
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    const { email } = this.request.user
     const user = await this.userRepsitory.findOne({
-      where: { email: userPayload.email },
+      where: { email },
     })
     if (
       !(await this.bcryptService.compare(
@@ -129,6 +185,7 @@ export class AuthService {
       password: newHasedPassword,
     })
 
-    return this.userRepsitory.save(userEntity)
+    await this.userRepsitory.save(userEntity)
+    return { message: 'Password changed successfully' }
   }
 }
