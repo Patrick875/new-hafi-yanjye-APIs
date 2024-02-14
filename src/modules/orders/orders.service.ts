@@ -138,7 +138,12 @@ export class OrdersService {
 
     if (role === Role.ADMIN) {
       return this.orderRepository.find({
-        relations: { customer: true, orderDetails: true },
+        relations: {
+          customer: true,
+          orderDetails: {
+            product: true,
+          },
+        },
       })
     }
     if (role === Role.CUSTOMER) {
@@ -149,7 +154,9 @@ export class OrdersService {
           },
         },
         relations: {
-          orderDetails: true,
+          orderDetails: {
+            product: true,
+          },
         },
       })
     }

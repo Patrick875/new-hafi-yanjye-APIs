@@ -81,6 +81,6 @@ export class ProductsService {
   }
 
   remove(id: number) {
-    return this.productRepository.delete(id)
+    return this.productRepository.softDelete(id)
   }
 }
