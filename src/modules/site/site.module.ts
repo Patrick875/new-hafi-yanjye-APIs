@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common'
-import { DistrictService, ProvinceService, SectorService, SiteService } from './site.service'
+import {
+  DistrictService,
+  ProvinceService,
+  SectorService,
+  SiteService,
+} from './site.service'
 import {
   DistrictController,
   ProvinceController,
