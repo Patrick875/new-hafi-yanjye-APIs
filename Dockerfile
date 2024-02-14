@@ -17,5 +17,7 @@ COPY --from=build /usr/src/app/node_modules ./node_modules
 # Expose the port if needed (not necessary in most cases)
 # EXPOSE 3000
 
+RUN yarn seed
+
 # Specify the command to run your application
 CMD [ "node", "dist/main.js" ]

@@ -124,6 +124,9 @@ export class SiteService {
   }
 }
 
+/**
+ * Province service
+ */
 @Injectable()
 export class ProvinceService {
   constructor(
@@ -132,6 +135,39 @@ export class ProvinceService {
   ) {}
   findAll() {
     return this.provinceRepository.find()
+  }
+}
+
+/**
+ * District service
+ */
+@Injectable()
+export class DistrictService {
+  constructor(
+    @InjectRepository(DistrictRepository)
+    private districtRepository: DistrictRepository,
+    @InjectRepository(DistrictRepository)
+    private provinceRepository: ProvinceRepository,
+  ) {}
+  findAll() {
+    return this.districtRepository.find()
+  }
+  async findAllByProvince(id: number) {
+    const province = await this.provinceRepository.findOne({
+      where: { id },
+    })
+
+    if (!province) {
+      throw new NotFoundException(`Province with Id: ${id} not found`)
+    }
+
+    return this.districtRepository.find({
+      where: {
+        province: {
+          id,
+        },
+      },
+    })
   }
 }
 
