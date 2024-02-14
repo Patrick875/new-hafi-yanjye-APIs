@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
-import { ProvinceService, SectorService, SiteService } from './site.service'
+import { DistrictService, ProvinceService, SectorService, SiteService } from './site.service'
 import {
+  DistrictController,
   ProvinceController,
   SectorController,
   SiteController,
@@ -29,7 +30,12 @@ import { DistrictRepository } from './site.repository.district'
       ProvinceRepository,
     ]),
   ],
-  controllers: [SiteController, ProvinceController, SectorController],
+  controllers: [
+    SiteController,
+    ProvinceController,
+    DistrictController,
+    SectorController,
+  ],
   providers: [
     SiteService,
     SectorService,
@@ -37,6 +43,7 @@ import { DistrictRepository } from './site.repository.district'
     SiteRepository,
     SectorRepository,
     DistrictRepository,
+    DistrictService,
     ProvinceRepository,
   ],
 })
