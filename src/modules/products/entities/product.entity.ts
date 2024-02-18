@@ -28,6 +28,12 @@ export class Product {
   @Column()
   quatity: number
 
+  @Column({ nullable: true })
+  datasheet_link: string
+
+  @Column({ nullable: true })
+  video_link: string
+
   @DeleteDateColumn()
   delete: Date
 

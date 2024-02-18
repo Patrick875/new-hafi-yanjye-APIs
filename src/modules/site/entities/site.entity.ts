@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { District } from './district.entity'
 import { Province } from './province.entity'
 import { Sector } from './sector.entity'
+import { Order } from 'src/modules/orders/entities/order.entity'
 // import { Cell } from './cell.entity'
 
 @Entity()
@@ -24,6 +25,6 @@ export class Site {
   @ManyToOne(() => Sector, (sector) => sector.site, { nullable: false })
   sector: Sector
 
-  // @ManyToOne(() => Cell, (cell) => cell.site)
-  // cell: Cell
+  @ManyToOne(() => Order, (orders) => orders.delivery_site)
+  orders: Order
 }

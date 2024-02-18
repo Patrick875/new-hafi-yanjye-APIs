@@ -8,6 +8,7 @@ import {
 import { OrderDetails } from './order-details.entity'
 import { User } from 'src/modules/users/entities/user.entity'
 import { Coupon } from 'src/modules/coupons/entities/coupon.entity'
+import { Site } from 'src/modules/site/entities/site.entity'
 
 @Entity()
 export class Order {
@@ -34,6 +35,9 @@ export class Order {
 
   @ManyToOne(() => User, (customer) => customer.orders)
   customer: User
+
+  @OneToMany(() => Site, (site) => site.orders)
+  delivery_site: Site
 }
 
 export enum OrderStatus {

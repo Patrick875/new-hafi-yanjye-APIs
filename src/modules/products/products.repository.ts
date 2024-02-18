@@ -6,4 +6,9 @@ export class ProductRepository extends Repository<Product> {
   constructor(private readonly dataSource: DataSource) {
     super(Product, dataSource.createEntityManager())
   }
+
+  getProductByName(name: string): Promise<Product> {
+    const product = this.findOne({ where: { name } })
+    return product
+  }
 }

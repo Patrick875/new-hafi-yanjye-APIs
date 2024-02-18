@@ -13,6 +13,7 @@ export class Category {
     nullable: true,
   })
   image: string
+
   @OneToMany(() => Product, (produc) => produc.category)
   products: Product[]
 }

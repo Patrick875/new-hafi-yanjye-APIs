@@ -27,6 +27,12 @@ export class CreateProductDto {
   @IsNumber()
   quatity: number
 
+  @IsString()
+  datasheet_link: string
+
+  @IsString()
+  video_link: string
+
   @IsNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })

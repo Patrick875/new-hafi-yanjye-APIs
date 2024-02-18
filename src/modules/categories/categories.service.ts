@@ -16,14 +16,22 @@ export class CategoriesService {
 
   async findAll() {
     return await this.categoryRepository.find({
-      relations: { products: true },
+      relations: {
+        products: {
+          images: true,
+        },
+      },
     })
   }
 
   async findOne(id: number) {
     return await this.categoryRepository.findOne({
       where: { id: id },
-      relations: ['products'],
+      relations: {
+        products: {
+          images: true,
+        },
+      },
     })
   }
 

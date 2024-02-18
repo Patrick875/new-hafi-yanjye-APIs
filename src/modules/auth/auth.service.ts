@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -51,6 +52,10 @@ export class AuthService {
   }
 
   async signUp(signUpto: SignUpDto) {
+    const user = await this.userRepsitory.getUserByEmail(signUpto.email)
+    if (user) {
+      throw new ConflictException('User with the same Email already exists')
+    }
     const userEntity = this.userRepsitory.create({
       ...signUpto,
       role: Role.CUSTOMER,

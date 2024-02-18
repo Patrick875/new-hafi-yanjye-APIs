@@ -14,6 +14,8 @@ import { Role } from '../users/entities/user.entity'
 import { Repository, SelectQueryBuilder } from 'typeorm'
 import { OrderProcess } from './entities/order-process.entity'
 import { AsignOrderAgentDto } from './dto/asignOrderAgent.dto'
+import { SiteRepository } from '../site/site.repository'
+import { Site } from '../site/entities/site.entity'
 
 @Injectable()
 export class OrdersService {
@@ -29,6 +31,8 @@ export class OrdersService {
     @InjectRepository(OrderProcess)
     private orderProcessRepository: Repository<OrderProcess>,
     @Inject(REQUEST) private readonly request: CustomRequest,
+    @InjectRepository(Site)
+    private siteRepository: SiteRepository,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -41,12 +45,20 @@ export class OrdersService {
       )
     }
 
+    const deliver_address = await this.siteRepository.findOne({
+      where: { id: createOrderDto.delivery_site },
+    })
+    if (!deliver_address) {
+      throw new NotFoundException(' The site does not exist')
+    }
+
     const { user } = this.request
-    const orderObj = {
+    const orderObj: Partial<Order> = {
       orderId: await this.generateOrderId(),
       orderDate: new Date(),
       status: OrderStatus.PENDING,
       customer: await this.userRepository.findOne({ where: { id: user.id } }),
+      delivery_site: deliver_address,
     }
 
     const order = this.orderRepository.create(orderObj)
@@ -143,6 +155,13 @@ export class OrdersService {
           orderDetails: {
             product: true,
           },
+          delivery_site: {
+            sector: {
+              district: {
+                province: true,
+              },
+            },
+          },
         },
       })
     }
@@ -156,6 +175,13 @@ export class OrdersService {
         relations: {
           orderDetails: {
             product: true,
+          },
+          delivery_site: {
+            sector: {
+              district: {
+                province: true,
+              },
+            },
           },
         },
       })

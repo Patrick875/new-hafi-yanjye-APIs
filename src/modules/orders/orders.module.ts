@@ -8,6 +8,8 @@ import { OrderDetailsRepository } from './order-details.repository'
 import { ProductRepository } from '../products/products.repository'
 import { UserRepository } from '../users/user.repository'
 import { OrderProcess } from './entities/order-process.entity'
+import { SiteRepository } from '../site/site.repository'
+import { Site } from '../site/entities/site.entity'
 
 @Module({
   imports: [
@@ -15,10 +17,12 @@ import { OrderProcess } from './entities/order-process.entity'
       Order,
       OrderProcess,
       OrderRepository,
+      Site,
       OrderDetailsRepository,
       UserRepository,
       ProductRepository,
       OrderDetailsRepository,
+      SiteRepository,
     ]),
   ],
   controllers: [OrdersController],
@@ -28,6 +32,7 @@ import { OrderProcess } from './entities/order-process.entity'
     UserRepository,
     ProductRepository,
     OrderDetailsRepository,
+    SiteRepository,
   ],
 })
 export class OrdersModule {}
