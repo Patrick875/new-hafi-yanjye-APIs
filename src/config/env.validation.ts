@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer'
 import { IsNotEmpty, IsString, validateSync } from 'class-validator'
+import { logger } from './logger'
 
 class EnvironmentVariables {
   @IsNotEmpty()
@@ -41,7 +42,8 @@ export function validate(config: Record<string, unknown>) {
   })
 
   if (errors.length > 0) {
-    throw new Error(errors.toString())
+    logger.error(`Environment variable validation failed: ${errors.toString()}`)
+    return Error(errors.toString())
   }
 
   return validateCOnfig
