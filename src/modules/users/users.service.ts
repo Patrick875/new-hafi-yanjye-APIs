@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { UserRepository } from './user.repository'
 import { generateRandomPassword } from 'src/utils/generate-password'
 import { EmailOption, MailService } from 'src/utils/emails'
+import { BcryptService } from '../auth/bcrypt.service'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserRepository) private userRepository: UserRepository,
     @Inject(MailService) private mailService: MailService,
+    @Inject(BcryptService) private bcyService: BcryptService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -19,10 +21,12 @@ export class UsersService {
       throw new ConflictException('User with the same Email already exists')
     }
     const password = generateRandomPassword()
+    const hashedPassword = await this.bcyService.hash(password)
+    console.log(hashedPassword)
 
     const userEntity = this.userRepository.create({
       ...createUserDto,
-      password,
+      password: hashedPassword,
     })
 
     const emailOption: EmailOption = {

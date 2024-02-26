@@ -43,7 +43,7 @@ export function validate(config: Record<string, unknown>) {
 
   if (errors.length > 0) {
     logger.error(`Environment variable validation failed: ${errors.toString()}`)
-    return Error(errors.toString())
+    throw new Error(errors.toString())
   }
 
   return validateCOnfig

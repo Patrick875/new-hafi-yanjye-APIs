@@ -8,6 +8,7 @@ import { UserRepository } from '../users/user.repository'
 import { User } from '../users/entities/user.entity'
 import { UsersService } from '../users/users.service'
 import { MailService } from 'src/utils/emails'
+import { BcryptService } from '../auth/bcrypt.service'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MailService } from 'src/utils/emails'
     UsersService,
     SupplierRepository,
     UserRepository,
+    BcryptService,
   ],
 })
 export class SupplierModule {}
