@@ -22,8 +22,6 @@ export class UsersService {
     }
     const password = generateRandomPassword()
     const hashedPassword = await this.bcyService.hash(password)
-    console.log(hashedPassword)
-
     const userEntity = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
