@@ -20,7 +20,7 @@ export class CreateCouponDto {
   @IsNumber()
   minItems: number
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsNumber()
   timeUsage: number
 

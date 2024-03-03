@@ -8,6 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
+export enum DiscountType {
+  ALL_PRODUCTS = 'ALL_PRODUCTS',
+  CATEGORIES = 'CATEGORIES',
+  PRODUCTS = 'PRODUCTS',
+}
+
 @Entity()
 export class Discount {
   @PrimaryGeneratedColumn()
@@ -20,8 +26,13 @@ export class Discount {
   endAt: Date
   @Column()
   rate: number
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: DiscountType,
+    default: DiscountType.ALL_PRODUCTS, // Set a default value if needed
+  })
   type: DiscountType
+
   @ManyToMany(() => Product)
   @JoinTable()
   products: Product[]
@@ -29,10 +40,4 @@ export class Discount {
   @ManyToMany(() => Category)
   @JoinTable()
   categories: Category[]
-}
-
-export const enum DiscountType {
-  ALL_PRODUCTS = 'ALL_PRODUCTS',
-  CATEGORIES = 'CATEGORIES',
-  PRODUCTS = 'PRODUCTS',
 }

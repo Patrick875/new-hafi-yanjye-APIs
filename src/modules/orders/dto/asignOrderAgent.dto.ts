@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsArray } from 'class-validator'
 
 export class AsignOrderAgentDto {
   @IsNotEmpty()
@@ -6,6 +6,7 @@ export class AsignOrderAgentDto {
   agentId: number
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsArray()
+  @IsNumber({}, { each: true }) // Ensure each item is a number
   orderItems: number[]
 }
