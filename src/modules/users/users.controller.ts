@@ -47,6 +47,12 @@ export class UsersController {
     return this.usersService.findAll(filterUsersDto)
   }
 
+  // @Get()
+  // @ApiOperation({ summary: 'Get all users' })
+  // findAllAgents(@Query() filterUsersDto: FilterUsersDto) {
+  //   return this.usersService.findAll(filterUsersDto)
+  // }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get single user by id' })
   findOne(@Param('id') id: string) {

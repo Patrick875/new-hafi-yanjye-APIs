@@ -1,7 +1,8 @@
 // filter-users.dto.ts
 
-import { IsOptional, IsString, IsEnum } from 'class-validator'
+import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator'
 import { Role } from '../entities/user.entity'
+import { Transform } from 'class-transformer'
 
 export class FilterUsersDto {
   @IsOptional()
@@ -23,4 +24,9 @@ export class FilterUsersDto {
   @IsOptional()
   @IsString()
   email?: string
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  userId?: number
 }

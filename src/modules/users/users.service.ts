@@ -7,6 +7,8 @@ import { generateRandomPassword } from 'src/utils/generate-password'
 import { EmailOption, MailService } from 'src/utils/emails'
 import { BcryptService } from '../auth/bcrypt.service'
 import { FilterUsersDto } from './dto/get-all-users.dto'
+import { Role } from './entities/user.entity'
+// import { OrderStatus } from '../orders/entities/order.entity'
 // import { OrderDetails } from '../orders/entities/order-details.entity'
 // import { OrderProcess } from '../orders/entities/order-process.entity'
 
@@ -67,10 +69,20 @@ export class UsersService {
   async findAll(filterUsersDto: FilterUsersDto) {
     // return this.userRepository.find({ relations: { orderProcessor: true } })
 
-    const { fullName, telephone, tinNumber, role, email } = filterUsersDto
+    const { fullName, telephone, tinNumber, role, email, userId } =
+      filterUsersDto
 
     const query = this.userRepository.createQueryBuilder('user')
 
+    // Only add the where clause if role is defined
+    if (role) {
+      query.where({ role })
+    }
+    if (userId) {
+      query.andWhere('user.id = :userId', { userId })
+    }
+
+    // Dynamic filters
     if (fullName) {
       query.andWhere('user.fullName LIKE :fullName', {
         fullName: `%${fullName}%`,
@@ -89,29 +101,41 @@ export class UsersService {
       })
     }
 
-    if (role) {
-      query.andWhere('user.role = :role', { role })
-    }
-
     if (email) {
       query.andWhere('user.email LIKE :email', { email: `%${email}%` })
     }
 
-    query
-      .leftJoinAndSelect('user.orders', 'order')
-      .leftJoinAndSelect('user.orderProcessor', 'orderProcessor')
-      .leftJoinAndSelect('order.orderDetails', 'orderDetails')
-    // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessorDetails')
-    // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessorDetails')
-
-    // const us = await query.getMany()
-
-    // console.log(us.[0])
+    if (role === Role.AGENT) {
+      return await query
+        .leftJoinAndSelect('user.orderProcessor', 'orderProcess')
+        .leftJoinAndSelect('orderProcess.orderItem', 'orderItem')
+        .leftJoinAndSelect('orderItem.order', 'order')
+        .getMany()
+    } else if (role === Role.CUSTOMER) {
+      return await query
+        .leftJoinAndSelect('user.orders', 'orders')
+        .leftJoinAndSelect('orders.orderDetails', 'orderDetails')
+        .leftJoinAndSelect('orderDetails.product', 'product')
+        .getMany()
+    } else if (role === Role.DRIVER) {
+      return 'Implementation In progress '
+    }
     return query.getMany()
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id } })
+    return await this.userRepository.findOne({
+      where: { id },
+
+      relations: [
+        'orderProcessor',
+        'orderProcessor.orderItem',
+        'orderProcessor.orderItem.order',
+        'orders',
+        'orders.orderDetails',
+        'orders.orderDetails.product',
+      ],
+    })
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

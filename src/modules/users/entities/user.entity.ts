@@ -4,7 +4,7 @@ import { Supplier } from 'src/modules/supplier/entities/supplier.entity'
 import {
   Column,
   Entity,
-  ManyToOne,
+  // ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -38,8 +38,8 @@ export class User {
   @OneToMany(() => Order, (orders) => orders.customer)
   orders: Order[]
 
-  @ManyToOne(() => OrderProcess, (orderProcessor) => orderProcessor.agent)
-  orderProcessor: OrderProcess
+  @OneToMany(() => OrderProcess, (orderProcessor) => orderProcessor.agent)
+  orderProcessor: OrderProcess[]
 
   @OneToMany(() => Supplier, (supplier) => supplier.createdBy)
   supplier: Supplier
