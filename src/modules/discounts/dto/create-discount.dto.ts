@@ -1,13 +1,12 @@
 import {
   IsArray,
   IsDate,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  MaxLength,
-  MinLength,
+  Max,
+  Min,
 } from 'class-validator'
 import { DiscountType } from '../entities/discount.entity'
 import { Transform } from 'class-transformer'
@@ -24,12 +23,12 @@ export class CreateDiscountDto {
   endAt: Date
 
   @IsNumber()
-  @MinLength(1)
-  @MaxLength(100)
+  @Min(1)
+  @Max(100)
   rate: number
 
   @IsString()
-  @IsEnum({ each: true })
+  // @IsEnum({ each: true })
   type: DiscountType
 
   @IsArray()

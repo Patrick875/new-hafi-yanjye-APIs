@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -21,6 +22,7 @@ import { AuthGuard } from '../auth/auth.guard'
 import { Roles } from '../auth/roles/roles.decorator'
 import { Role } from './entities/user.entity'
 import { RolesGuard } from '../auth/roles/roles.guard'
+import { FilterUsersDto } from './dto/get-all-users.dto'
 
 @ApiTags('users')
 @Controller('users')
@@ -41,8 +43,8 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  findAll() {
-    return this.usersService.findAll()
+  findAll(@Query() filterUsersDto: FilterUsersDto) {
+    return this.usersService.findAll(filterUsersDto)
   }
 
   @Get(':id')

@@ -1,11 +1,15 @@
-import { IsNotEmpty, IsNumber } from 'class-validator'
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber } from 'class-validator'
 
 export class AsignOrderAgentDto {
   @IsNotEmpty()
   @IsNumber()
   agentId: number
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsArray()
+  @ArrayMinSize(1, { message: 'At least one order item is required' })
+  @IsNumber(
+    {},
+    { each: true, message: 'Each item in orderItems must be a number' },
+  )
   orderItems: number[]
 }

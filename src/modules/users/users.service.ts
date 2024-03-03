@@ -6,6 +6,9 @@ import { UserRepository } from './user.repository'
 import { generateRandomPassword } from 'src/utils/generate-password'
 import { EmailOption, MailService } from 'src/utils/emails'
 import { BcryptService } from '../auth/bcrypt.service'
+import { FilterUsersDto } from './dto/get-all-users.dto'
+// import { OrderDetails } from '../orders/entities/order-details.entity'
+// import { OrderProcess } from '../orders/entities/order-process.entity'
 
 @Injectable()
 export class UsersService {
@@ -61,8 +64,50 @@ export class UsersService {
     return this.userRepository.save(userEntity)
   }
 
-  findAll() {
-    return this.userRepository.find()
+  async findAll(filterUsersDto: FilterUsersDto) {
+    // return this.userRepository.find({ relations: { orderProcessor: true } })
+
+    const { fullName, telephone, tinNumber, role, email } = filterUsersDto
+
+    const query = this.userRepository.createQueryBuilder('user')
+
+    if (fullName) {
+      query.andWhere('user.fullName LIKE :fullName', {
+        fullName: `%${fullName}%`,
+      })
+    }
+
+    if (telephone) {
+      query.andWhere('user.telephone LIKE :telephone', {
+        telephone: `%${telephone}%`,
+      })
+    }
+
+    if (tinNumber) {
+      query.andWhere('user.tinNumber LIKE :tinNumber', {
+        tinNumber: `%${tinNumber}%`,
+      })
+    }
+
+    if (role) {
+      query.andWhere('user.role = :role', { role })
+    }
+
+    if (email) {
+      query.andWhere('user.email LIKE :email', { email: `%${email}%` })
+    }
+
+    query
+      .leftJoinAndSelect('user.orders', 'order')
+      .leftJoinAndSelect('user.orderProcessor', 'orderProcessor')
+      .leftJoinAndSelect('order.orderDetails', 'orderDetails')
+    // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessorDetails')
+    // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessorDetails')
+
+    // const us = await query.getMany()
+
+    // console.log(us.[0])
+    return query.getMany()
   }
 
   async findOne(id: number) {

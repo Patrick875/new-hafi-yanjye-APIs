@@ -21,14 +21,10 @@ export class CreateCouponDto {
   minItems: number
 
   @IsNotEmpty()
-  @IsNumber()
-  timeUsage: number
-
-  @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })
   minCost: number
 
   @IsNotEmpty()
-  @IsArray()
+  @IsArray({ each: true })
   productIds: number[]
 }
