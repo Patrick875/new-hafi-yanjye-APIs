@@ -29,7 +29,11 @@ export class Discount {
   @Column({
     type: 'enum',
     enum: DiscountType,
+<<<<<<< HEAD
     default: DiscountType.ALL_PRODUCTS, // Set a default value if needed
+=======
+    default: DiscountType.ALL_PRODUCTS,
+>>>>>>> 755f786af2b1c3f20ed2a6e5093c596bf98ccacc
   })
   type: DiscountType
 

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -22,10 +23,17 @@ export class OrderProcess {
   @Column()
   orderItemId: number
 
+  @Column({ nullable: true })
+  agentId: number
+
   @Column({ default: ProcessStatuses.ASSIGNED })
   processStatus: ProcessStatuses
 
-  @OneToMany(() => User, (user) => user.orderProcessor)
+  // @OneToMany(() => User, (user) => user.orderProcessor, { nullable: false })
+  // agent: User
+
+  @ManyToOne(() => User, (user) => user.orderProcessor)
+  @JoinColumn({ name: 'agentId' })
   agent: User
 
   @ManyToOne(() => OrderDetails, (orderDetails) => orderDetails.orderProcessor)

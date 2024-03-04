@@ -34,6 +34,7 @@ export class MailService {
       if (error) {
         console.error('Error sending reset email:', error)
       } else {
+        // eslint-disable-next-line no-console
         console.log('Reset email sent:', info.response)
       }
     })

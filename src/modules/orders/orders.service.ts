@@ -11,7 +11,7 @@ import { UserRepository } from '../users/user.repository'
 import { REQUEST } from '@nestjs/core'
 import { CustomRequest } from '../auth/auth.constants'
 import { Role } from '../users/entities/user.entity'
-import { Repository, SelectQueryBuilder } from 'typeorm'
+import { In, Repository, SelectQueryBuilder } from 'typeorm'
 import { OrderProcess } from './entities/order-process.entity'
 import { AsignOrderAgentDto } from './dto/asignOrderAgent.dto'
 import { SiteRepository } from '../site/site.repository'
@@ -106,18 +106,31 @@ export class OrdersService {
       where: { id: agentId, role: Role.AGENT },
     })
 
+    if (!agent) {
+      throw new NotFoundException(`Could not find agent with Id: ${agentId} `)
+    }
+
     const unexstitngOrderItems: number[] = []
     const validOrderItems: OrderDetails[] = []
-    const orderAgets = []
+    const orderAgents: OrderProcess[] = []
 
-    for (const orderItem of orderItems) {
+    for (const orderItemId of orderItems) {
       const orderDetatil = await this.orderDetailsRepository.findOne({
-        where: { id: orderItem },
+        where: { id: orderItemId },
       })
       if (!orderDetatil) {
-        unexstitngOrderItems.push(orderItem)
+        unexstitngOrderItems.push(orderItemId)
+      } else {
+        const orderAgent = this.orderProcessRepository.create({
+          orderItemId: orderDetatil.id,
+          agent,
+          orderItem: orderDetatil,
+          agentId: agent.id,
+        })
+        orderAgents.push(orderAgent)
+        validOrderItems.push(orderDetatil)
       }
-      validOrderItems.push(orderDetatil)
+      // validOrderItems.push(orderDetatil)
     }
 
     if (unexstitngOrderItems.length) {
@@ -126,26 +139,18 @@ export class OrdersService {
       )
     }
 
-    if (!agent) {
-      throw new NotFoundException(`Could not find agent with Id: ${agentId} `)
-    }
+    // return this.orderProcessRepository.save(orderAgents)
 
-    for (const validOrderItem of validOrderItems) {
-      const orderAget = this.orderProcessRepository.create({
-        orderItemId: validOrderItem.id,
-        agent,
-        orderItem: validOrderItem,
-      })
-      orderAgets.push(orderAget)
-    }
+    await this.orderProcessRepository.save(orderAgents)
 
-    return this.orderProcessRepository.save(orderAgets)
+    // The agent should be attached to the OrderProcess entities at this point
+    return this.orderProcessRepository.find({
+      where: { orderItemId: In(orderItems) },
+    })
   }
-  findAll():
-    | any[]
-    | Promise<Order[]>
-    | SelectQueryBuilder<Order>
-    | Promise<OrderDetails[]> {
+  async findAll(): Promise<
+    any[] | OrderDetails[] | Order[] | SelectQueryBuilder<Order>
+  > {
     const { id: userId, role } = this.request.user
 
     if (role === Role.ADMIN) {
@@ -188,20 +193,28 @@ export class OrdersService {
     }
 
     if (role === Role.AGENT) {
-      // return this.orderDetailsRepository.find({
-      //   relations: { orderProcessor: true },
-      // })
-      return (
-        this.orderRepository
-          .createQueryBuilder('order')
-          .innerJoinAndSelect('order.orderDetails', 'orderDetails')
-          // .leftJoinAndSelect('orderDetails.orderProcessor', 'orderProcessor')
-          // .leftJoinAndSelect('orderProcessor.agent', 'agent')
-          // .where('agent.id = :id', { id: userId })
-          // .innerJoinAndSelect('orderProcessor.agent', 'users')
-          // .where('agent.id = :id', { id: userId })
-          .getMany()
+      // Find OrderProcess entities associated with the specified agent
+      const orderProcesses = await this.orderProcessRepository.find({
+        where: { agent: { id: userId } },
+        relations: ['orderItem', 'orderItem.order'],
+      })
+
+      // Extract the order items from OrderProcess entities
+      const orderItems = orderProcesses.map(
+        (orderProcess) => orderProcess.orderItem,
       )
+
+      // Extract unique orders from the order items using a set to avoid duplicates
+      const uniqueOrderIds = Array.from(
+        new Set(orderItems.map((orderItem) => orderItem.order.id)),
+      )
+      // Fetch additional details for the orders
+      const detailedOrders = await this.orderRepository.find({
+        where: { id: In(uniqueOrderIds) },
+        relations: ['customer', 'delivery_site', 'orderDetails'],
+      })
+
+      return detailedOrders
     }
 
     return []

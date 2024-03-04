@@ -5,15 +5,15 @@ import { Role } from '../users/entities/user.entity'
 
 @Injectable()
 export class CustomersService {
-  // create(createCustomerDto: CreateCustomerDto) {
-  //   return 'This action adds a new customer'
-  // }
   constructor(
     @InjectRepository(UserRepository) private userRepository: UserRepository,
   ) {}
 
   findAll() {
-    return this.userRepository.find({ where: { role: Role.CUSTOMER } })
+    return this.userRepository.find({
+      where: { role: Role.CUSTOMER },
+      relations: { orders: true },
+    })
   }
 
   findOne(id: number) {
